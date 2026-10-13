@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#152b35"><meta name="description" content="一片可以停留的海。让光落在浪尖，听远方的雷，慢一点，也没关系。"><title>潮汐之间 · Between the Tides</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23132938'/%3E%3Cpath d='M10 35q10-16 22 0t22 0M10 45q10-16 22 0t22 0' fill='none' stroke='%23f5e7c7' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="ocean" aria-label="可按住滑动造浪的实时海面与天空" aria-describedby="waveHint"></canvas><canvas id="weather" aria-hidden="true"></canvas><div class="vignette" aria-hidden="true"></div>
+<header class="ui header"><div><div class="eyebrow">AN ENDLESS MOMENT</div><h1>潮汐之间</h1><div class="english">Between the Tides</div><p class="intro">把时间，交给大海。</p></div><div class="topright"><span class="poem">天光流转 <i></i> 潮汐不息</span><button id="clockButton" class="clock" aria-label="打开时间设置"><span class="sun-symbol">◷</span><span id="clock">17:30</span><span id="period">日落时分</span></button></div></header>
+<div id="gestureGuide" hidden aria-hidden="true"></div><div id="waveAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="waveHint" class="wave-hint ui">按住海面，滑动后松开 <span>· 越快越远，浪越高</span></div>
+<div id="loading" role="status">风正从海上来<span></span></div><div id="error" role="alert" hidden>当前浏览器未能开启海面渲染。请在支持 WebGL 的浏览器中打开，并启用硬件加速。</div>
+<aside id="panel" class="panel" aria-label="海面设置" hidden>
+<div class="panel-heading"><div><span class="eyebrow">MAKE IT YOUR MOMENT</span><h2>调一调大海</h2></div><button id="closePanel" class="icon-button close" aria-label="关闭设置">×</button></div>
+<section><div class="label"><label for="time">一天中的时间</label><output id="timeValue">17:30</output></div><input id="time" class="time-track" type="range" min="0" max="23.99" step="0.01" value="17.5"><div class="presets" aria-label="时间预设"><button data-hour="6.4">晨光</button><button data-hour="12">正午</button><button data-hour="17.5" class="active">落日</button><button data-hour="22">月夜</button></div><label class="switch-row"><span>让时间慢慢流动</span><input id="cycle" type="checkbox" role="switch"><i></i></label></section>
+<section><div class="label"><label for="waveHeight">海浪高度</label><output id="waveHeightValue">1.0×</output></div><input id="waveHeight" type="range" min="0.2" max="3" step="0.1" value="1"><div class="range-ends"><span>轻柔涟漪</span><span>汹涌起伏</span></div><p class="setting-note">按住海面滑动后松开，沿手势掀起一道巨浪。</p></section>
+<section><div class="label"><label for="reflection">海面反光</label><output id="reflectionValue">80%</output></div><input id="reflection" type="range" min="0" max="100" value="80"><div class="range-ends"><span>柔和</span><span>粼粼波光</span></div></section>
+<section><div class="label"><label for="storm">雷暴强度</label><output id="stormValue">晴朗</output></div><input id="storm" type="range" min="0" max="100" value="0"><div class="range-ends"><span>晴空</span><span>远方雷雨</span></div><p class="setting-note">云层、雨、风浪与闪电随强度变化。</p></section>
+<section class="last"><label class="switch-row"><span>减弱动态与闪光</span><input id="reduced" type="checkbox" role="switch"><i></i></label><p class="setting-note">减慢海浪，关闭视角起伏与闪电。</p><div class="quality-row"><label for="quality">画面质量</label><select id="quality"><option value="auto">自动</option><option value="high">细腻</option><option value="low">流畅</option></select></div></section>
+</aside>
+<footer class="ui footer"><div class="sea-status"><span class="line"></span><div><span id="mood">风轻，海面泛着金光</span><small id="seaDetails">OPEN WATER · LIVE</small></div></div><nav class="controls" aria-label="播放与画面控制"><button id="pause" class="round" aria-label="暂停海浪" title="暂停海浪"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></button><button id="sound" class="round" aria-label="开启海浪声" aria-pressed="false" title="开启海浪声"><svg viewBox="0 0 24 24"><path d="m4 10 4 0 5-5v14l-5-5H4zM17 9l4 6M21 9l-4 6"/></svg></button><button id="settings" class="settings-button" aria-expanded="false" aria-controls="panel"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg><span>调一调大海</span></button><button id="fullscreen" class="round" aria-label="进入全屏" title="进入全屏"><svg viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M4 15v5h5M20 15v5h-5"/></svg></button></nav><button id="immerse" class="minimal" aria-label="隐藏界面，沉浸看海" title="隐藏界面，沉浸看海"><svg viewBox="0 0 24 24"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></footer>
+<button id="returnUI" hidden>轻触，回到岸边</button><div id="toast" role="status"></div>
+<script src="waves.js"></script><script src="ocean.js"></script>
+</body></html>

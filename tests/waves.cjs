@@ -1,0 +1,9 @@
+const assert=require('assert');const W=require('../dist/waves.js');
+const w=1200,h=750,scene=8,camera=3.7;
+function gesture(x=600,y=560){const r=W.ray(x,y,w,h,scene,false,camera);const t=(1.15-r.origin.y)/r.direction.y;return{x,y,time:0,scene,camera,origin:{x:r.origin.x+r.direction.x*t,y:1.15,z:r.origin.z+r.direction.z*t}};}
+const g=gesture();
+for(const [name,x,y,check] of [['right',800,560,q=>q.dx>.99],['left',400,560,q=>q.dx<-.99],['away',600,450,q=>q.dz<-.99],['toward',600,700,q=>q.dz>.99],['into sky',600,50,q=>q.dz<-.99]]){const q=W.fromGesture(g,x,y,300,w,h,false,0);assert(q&&check(q),name);assert(Math.abs(Math.hypot(q.dx,q.dz)-1)<1e-12,name+' normalized');}
+assert.equal(W.fromGesture(g,605,561,200,w,h,false,0),null,'tap does not create giant wave');
+const fast=W.fromGesture(g,900,560,160,w,h,false,0),slow=W.fromGesture(g,900,560,1600,w,h,false,0),short=W.fromGesture(g,625,560,300,w,h,false,0);assert(fast.amplitude>slow.amplitude);assert(slow.amplitude>short.amplitude);assert(fast.amplitude<=8);
+const q={x:0,z:-12,dx:1,dz:0,born:0,amplitude:8,width:5,speed:3};assert.equal(W.sample([q],0,-12,0,1),0,'wave eases in');let peak=W.sample([q],3,-12,1,1);assert(peak>3&&peak<6,'large crest');assert(W.sample([q],3,-12,1,3)>peak,'height slider scales generated wave');assert(W.sample([q],3,-12,1,.2)<peak);assert(W.sample([q],3,30,1,1)<.001,'local footprint');assert.equal(W.sample([q],42,-12,14.1,1),0,'bounded lifetime');assert(W.sample([q],18,-12,6,1)<peak,'decay');assert(W.sample([q],3,-12,1,1)>W.sample([q],0,-12,1,1),'travels in direction');assert(Number.isFinite(W.sample(Array(4).fill(q),3,-12,1,3)),'overlap finite');assert(W.sample(Array(4).fill(q),3,-12,1,3)<20,'overlap saturation');
+console.log('PASS: projected left/right/near/far directions, skyward drags, tap threshold, speed/distance strength, easing, large crests, height coupling, locality, propagation, decay, expiry, bounded overlap');

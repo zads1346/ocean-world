@@ -1,0 +1,12 @@
+# Local tooling and operating-system files
+.DS_Store
+Thumbs.db
+node_modules/
+__pycache__/
+*.log
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+.openai/
